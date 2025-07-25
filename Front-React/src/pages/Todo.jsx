@@ -8,7 +8,7 @@ const Todo = () => {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState('');
 
-  const API_URL = 'https://gravity-2.onrender.com/api/todos';
+  const API_URL = 'https://gravity-2-1.onrender.com/api/todos';
   const token = localStorage.getItem('token');
 
   const config = {

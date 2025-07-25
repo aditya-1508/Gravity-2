@@ -8,7 +8,7 @@ export default function TodoList() {
 
   // Fetch todos from backend
   const fetchTodos = async () => {
-    const res = await fetch('https://gravity-2.onrender.com/api/todos', {
+    const res = await fetch('https://gravity-2-1.onrender.com/api/todos', {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -22,7 +22,7 @@ export default function TodoList() {
   // Add new todo
   const handleAdd = async () => {
     if (!task.trim()) return;
-    const res = await fetch('https://gravity-2.onrender.com/api/todos', {
+    const res = await fetch('https://gravity-2-1.onrender.com/api/todos', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export default function TodoList() {
 
   // Toggle complete
   const toggleTodo = async id => {
-    const res = await fetch(`https://gravity-2.onrender.com/api/todos/${id}/toggle`, {
+    const res = await fetch(`https://gravity-2-1.onrender.com/api/todos/${id}/toggle`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -47,7 +47,7 @@ export default function TodoList() {
 
   // Delete todo
   const deleteTodo = async id => {
-    const res = await fetch(`https://gravity-2.onrender.com/api/todos/${id}`, {
+    const res = await fetch(`https://gravity-2-1.onrender.com/api/todos/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
