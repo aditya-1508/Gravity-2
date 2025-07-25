@@ -16,7 +16,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://gravity-2.onrender.com/auth/login', { email, password });
+      const res = await axios.post('https://gravity-2-2.onrender.com/auth/login', { email, password });
       login(res.data);
       navigate('/');
     } catch (err) {

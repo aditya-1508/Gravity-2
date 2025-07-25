@@ -22,7 +22,7 @@ function Register() {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('https://gravity-2.onrender.com/auth/register', formData);
+      const res = await axios.post('https://gravity-2-2.onrender.com/auth/register', formData);
       login(res.data);
       navigate('/');
     } catch (err) {
