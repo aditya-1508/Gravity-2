@@ -1,0 +1,38 @@
+/* Fade-in animation for page containers */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+/* Button hover and focus animations */
+.button-animated {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-animated:hover,
+.button-animated:focus {
+  background-color: #2563eb; /* Tailwind blue-600 */
+  transform: scale(1.05);
+  outline: none;
+}
+
+/* Input focus animation */
+.input-animated {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-animated:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+  outline: none;
+}
