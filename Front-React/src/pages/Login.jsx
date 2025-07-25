@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 import '../styles/animations.css'; // Optional extra animation styles
 import '../index.css'; // ✅ Tailwind styles
 
@@ -11,13 +10,12 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('https://gravity-2-1.onrender.com/api/auth/login', { email, password });
-      login(res.data);
+      localStorage.setItem('token', res.data.token);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
