@@ -1,5 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
+import * as THREE from 'three';
+import RINGS from 'vanta/dist/vanta.rings.min';
 
 const Todo = () => {
   const [todos, setTodos] = useState([]);
@@ -10,6 +12,8 @@ const Todo = () => {
 
   const API_URL = 'https://gravity-2-1.onrender.com/api/todos';
   const token = localStorage.getItem('token');
+  const vantaRef = useRef(null);
+  const vantaEffect = useRef(null);
 
   const config = {
     headers: {
@@ -85,9 +89,33 @@ const Todo = () => {
     fetchTodos();
   }, [fetchTodos]);
 
+  useEffect(() => {
+    if (!vantaEffect.current) {
+      vantaEffect.current = RINGS({
+        el: vantaRef.current,
+        THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.0,
+        minWidth: 200.0,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        backgroundColor: 0xf1f5f9, // Optional: tailwind's slate-100 background
+      });
+    }
+
+    return () => {
+      if (vantaEffect.current) vantaEffect.current.destroy();
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6">
+    <div
+      ref={vantaRef}
+      className="min-h-screen flex items-center justify-center px-4 py-10"
+    >
+      <div className="w-full max-w-2xl bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 backdrop-blur-md">
         <h1 className="text-4xl font-bold text-center mb-6 text-blue-700">📝 Your Todo List</h1>
 
         <form onSubmit={createTodo} className="flex mb-6">
