@@ -1,7 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import * as THREE from 'three';
-import RINGS from 'vanta/dist/vanta.rings.min';
 
 const Todo = () => {
   const [todos, setTodos] = useState([]);
@@ -12,8 +10,6 @@ const Todo = () => {
 
   const API_URL = 'https://gravity-2-1.onrender.com/api/todos';
   const token = localStorage.getItem('token');
-  const vantaRef = useRef(null);
-  const vantaEffect = useRef(null);
 
   const config = {
     headers: {
@@ -31,7 +27,7 @@ const Todo = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_URL, token]);
+  }, []);
 
   const createTodo = async (e) => {
     e.preventDefault();
@@ -89,46 +85,22 @@ const Todo = () => {
     fetchTodos();
   }, [fetchTodos]);
 
-  useEffect(() => {
-    if (!vantaEffect.current) {
-      vantaEffect.current = RINGS({
-        el: vantaRef.current,
-        THREE,
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.0,
-        minWidth: 200.0,
-        scale: 1.0,
-        scaleMobile: 1.0,
-        backgroundColor: 0xf1f5f9, // Optional: tailwind's slate-100 background
-      });
-    }
-
-    return () => {
-      if (vantaEffect.current) vantaEffect.current.destroy();
-    };
-  }, []);
-
   return (
-    <div
-      ref={vantaRef}
-      className="min-h-screen flex items-center justify-center px-4 py-10"
-    >
-      <div className="w-full max-w-2xl bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 backdrop-blur-md">
-        <h1 className="text-4xl font-bold text-center mb-6 text-blue-700">📝 Your Todo List</h1>
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-2xl bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 animate-fade-in">
+        <h1 className="text-4xl font-bold text-center text-indigo-700 mb-8">📝 Your Todo List</h1>
 
-        <form onSubmit={createTodo} className="flex mb-6">
+        <form onSubmit={createTodo} className="flex mb-6 gap-2">
           <input
             type="text"
             placeholder="Add a new todo..."
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="flex-1 p-3 rounded-l-xl border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="flex-1 p-3 border border-indigo-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-r-xl hover:bg-blue-700 transition"
+            className="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition duration-300"
           >
             Add
           </button>
@@ -141,8 +113,8 @@ const Todo = () => {
             {todos.map((todo) => (
               <li
                 key={todo._id}
-                className={`flex items-center justify-between px-4 py-3 rounded-xl shadow-md ${
-                  todo.completed ? 'bg-green-100' : 'bg-gray-100'
+                className={`flex items-center justify-between px-4 py-3 rounded-xl shadow-md transition-all duration-300 ${
+                  todo.completed ? 'bg-green-100' : 'bg-slate-100'
                 }`}
               >
                 {editId === todo._id ? (
@@ -169,17 +141,17 @@ const Todo = () => {
                 ) : (
                   <>
                     <span
+                      onClick={() => toggleComplete(todo._id, todo.completed)}
                       className={`flex-1 cursor-pointer text-lg ${
                         todo.completed ? 'line-through text-gray-500' : 'text-gray-800'
                       }`}
-                      onClick={() => toggleComplete(todo._id, todo.completed)}
                     >
                       {todo.text}
                     </span>
                     <div className="ml-2 flex-shrink-0 space-x-2">
                       <button
                         onClick={() => startEdit(todo._id, todo.text)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-indigo-600 hover:text-indigo-800"
                       >
                         ✏️
                       </button>
