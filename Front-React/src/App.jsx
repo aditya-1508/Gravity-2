@@ -8,7 +8,7 @@ import TestTailwind from './components/TestTailwind';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = 'https://gravity-2.onrender.com/api';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 function AppRoutes() {
