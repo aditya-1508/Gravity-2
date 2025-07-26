@@ -22,16 +22,22 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  console.log('Login attempt for email:', email);
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid email' });
+    if (!user) {
+      console.log('User not found for email:', email);
+      return res.status(400).json({ message: 'Invalid email' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password match result for email', email, ':', isMatch);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(200).json({ token });
+    res.status(200).json({ id: user._id, email: user.email, token });
   } catch (err) {
+    console.error('Login error for email:', email, err);
     res.status(500).json({ message: err.message });
   }
 });
