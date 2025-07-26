@@ -2,69 +2,73 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import '../styles/animations.css'; // Optional extra animation styles
+import '../index.css'; // ✅ Tailwind styles
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     try {
-      const res = await axios.post('https://gravity-2-1.onrender.com/api/auth/login', {
-        email,
-        password,
-      });
-      localStorage.setItem('token', res.data.token);
+      const res = await axios.post('/auth/login', { email, password });
+      login(res.data);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-4 py-10 bg-slate-100">
-      <div className="w-full max-w-md bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 backdrop-blur-md">
-        <h1 className="text-4xl font-bold text-center mb-6 text-blue-700">🔐 Login to Continue</h1>
+    
+    <div className="min-h-screen bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center animate-fade-in">
+      
 
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md transform transition duration-500 hover:scale-[1.02]">
+        <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6 animate-slide-down">
+          Welcome Back 👋
+        </h2>
         {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md mb-4 text-center text-sm">
+          <div className="bg-red-100 text-red-700 px-4 py-2 mb-4 rounded text-sm text-center animate-pulse">
             {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-
+          <div>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300"
+            />
+          </div>
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition transform hover:scale-105"
+            className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105"
           >
             Login
           </button>
         </form>
-
-        <p className="text-sm text-gray-700 text-center mt-6">
+        <p className="text-sm text-gray-500 text-center mt-4">
           Don’t have an account?{' '}
-          <a href="/register" className="text-blue-600 hover:underline font-medium">
+          <a href="/register" className="text-indigo-600 hover:underline">
             Register
           </a>
         </p>
