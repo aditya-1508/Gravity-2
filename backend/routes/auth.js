@@ -1,27 +1,27 @@
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Utility function to generate JWT token
+// Generate JWT token
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
 exports.register = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create user (password hashing is done in model)
-    const user = await User.create({ email, password });
+    const user = await User.create({ username, email, password });
 
     res.status(201).json({
       id: user._id,
+      username: user.username,
       email: user.email,
       token: generateToken(user._id),
     });
@@ -31,19 +31,17 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Login existing user
+// @desc    Login a user
 // @route   POST /api/auth/login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Use model method to compare password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -51,6 +49,7 @@ exports.login = async (req, res) => {
 
     res.json({
       id: user._id,
+      username: user.username,
       email: user.email,
       token: generateToken(user._id),
     });
