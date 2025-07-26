@@ -1,45 +1,61 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const router = express.Router();
 
-// Register
-router.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, email, password: hashedPassword });
-    await user.save();
+// Utility function to generate JWT token
+const generateToken = (id) =>
+  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(201).json({ token });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// Login
-router.post('/login', async (req, res) => {
+// @desc    Register a new user
+// @route   POST /api/auth/register
+exports.register = async (req, res) => {
   const { email, password } = req.body;
-  console.log('Login attempt for email:', email);
+
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      console.log('User not found for email:', email);
-      return res.status(400).json({ message: 'Invalid email' });
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log('Password match result for email', email, ':', isMatch);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    // Create user (password hashing is done in model)
+    const user = await User.create({ email, password });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(200).json({ id: user._id, email: user.email, token });
+    res.status(201).json({
+      id: user._id,
+      email: user.email,
+      token: generateToken(user._id),
+    });
   } catch (err) {
-    console.error('Login error for email:', email, err);
-    res.status(500).json({ message: err.message });
+    console.error('Registration error:', err.message);
+    res.status(500).json({ message: 'Server error' });
   }
-});
+};
 
-module.exports = router;
+// @desc    Login existing user
+// @route   POST /api/auth/login
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Use model method to compare password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    res.json({
+      id: user._id,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+  } catch (err) {
+    console.error('Login error:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
