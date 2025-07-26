@@ -9,7 +9,10 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors()); // Allow cross-origin
+app.use(cors({
+  origin: 'https://gravity-2-1.onrender.com',
+  credentials: true
+}));
 app.use(express.json()); // Parse incoming JSON
 
 // Routes
@@ -25,5 +28,5 @@ mongoose
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-const PORT =process.env.PORT||5000;
+const PORT =5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
