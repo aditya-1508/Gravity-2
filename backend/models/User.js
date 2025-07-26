@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt'); // ✅ Use native bcrypt
+const bcrypt = require('bcryptjs'); // Changed from 'bcrypt' to 'bcryptjs'
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
